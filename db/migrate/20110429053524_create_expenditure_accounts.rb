@@ -5,7 +5,7 @@ class CreateExpenditureAccounts < ActiveRecord::Migration
       t.float :allocation, :default => 0.0
       t.float :spent, :default => 0.0
       t.string :account_type , :limit => 1, :default => 'M'
-      t.boolean :rollover, :default => 1
+      t.boolean :rollover, :default => true
       t.integer :month, :limit => 1
       t.integer :halfyear, :limit => 1 
       t.integer :year, :limit => 2
