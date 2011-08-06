@@ -27,7 +27,7 @@ test:
   password: vmd2310s
 
 staging:
-  adapter: mysql2
+  adapter: postgresql
   encoding: utf8
   reconnect: false
   database: jedo_staging
