@@ -4,7 +4,7 @@ class CreateExpenditureSubCategories < ActiveRecord::Migration
       t.string :name, :null => false
       t.float :allocation, :default => 0.0
       t.float :spent, :default => 0.0
-      t.boolean :rollover, :default => 1
+      t.boolean :rollover, :default => true
       t.references :expenditure_category 
       t.timestamps
     end
