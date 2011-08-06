@@ -35,4 +35,5 @@ gem 'mysql2' , '0.2.7'
 
 group :production do    
   gem 'pg'
+  gem 'thin'
 end
