@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  name: MyString
+  allocation: 1.5
+  spent: 1.5
+  rollover: false
+
+two:
+  name: MyString
+  allocation: 1.5
+  spent: 1.5
+  rollover: false

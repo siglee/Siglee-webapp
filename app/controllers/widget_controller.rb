@@ -1,0 +1,3 @@
+class WidgetController < ApplicationController
+      
+end

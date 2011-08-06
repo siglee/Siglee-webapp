@@ -1,0 +1,44 @@
+
+
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>Siglee</title>
+ <%= stylesheet_link_tag "main.css" %>
+ <!-- <%= javascript_include_tag "rails.js" %> -->
+ <%= javascript_include_tag "jquery.js" %>
+ <%= javascript_include_tag "application.js" %>
+ <%= yield(:head)%>
+ <%= csrf_meta_tag %>
+</head>
+<body>
+	<div class="page">
+		<div class="headerDiv" >
+		<h1 class="heading">Expenditure Management</h1>
+		</div>
+		<div class="contentDiv" >
+				<div class="contentLeftNavDiv">				
+				    <%= render "widget/account_navigation" %>
+				</div>
+				<div class="contentBodyDiv" >
+				    <!-- <div class="breadcrumb">
+				        <ul>
+				            <li><a href="index.html">Home</a></li>                          
+				        </ul>
+				    </div> -->					
+					
+					<div class="content">
+						<%= yield %>
+					</div>	
+				</div>				
+		</div>
+		<div class="footerDiv">
+			<div id="footerNavLeft"><ul><li>&copy; All Rights Reserved 2009 &nbsp; (<%= APP_VERSION.to_s %>) </li></ul></div>
+			<div id="footerNavRight"><ul><li><a href="#">Terms Of Use</a></li><li>&nbsp;|&nbsp;</li><li><a href="#">Privacy Policy</a></li></ul></div>
+		</div>
+	</div>
+</body>
+</html>
+

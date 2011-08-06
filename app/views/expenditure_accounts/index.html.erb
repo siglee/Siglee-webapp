@@ -1,0 +1,35 @@
+<% javascript 'accounts_listing' %>
+<% javascript 'jquery.dataTables-1.7.6.js' %>
+<% javascript 'jquery.jeditable-1.7.1.js' %>
+
+<div class="main_acc_list_Hdr"><h3 class="account_hdr_title">Expenditure Accounts</h3></div>
+
+<table class="expdTable" id="accounts_list_table" >
+	<thead class="accHeader">
+		<th class="expdHdrDataName">Account Name</th>
+		<th class="expdHdrDataCol">Budgeted</th>
+		<th class="expdHdrDataCol">Spent</th>
+		<th class="expdHdrDataCol">Balance</th>
+		<th class="expdHdrImg">Show</th>
+		<th class="expdHdrImg">Delete</th>									
+	</thead>
+	<% @expenditure_accounts.each do |expenditure_account| %>
+	  <tr id="ACC_<%=expenditure_account.id %>">
+	    <td class="expdName"> <%= expenditure_account.name %></td>
+	    <td class="allocation"><%= expenditure_account.allocation %></td>
+	    <td class="spent"><%= expenditure_account.spent %></td>
+	    
+	    <% if expenditure_account.allocation - expenditure_account.spent >= 0 %>
+            <td class="expdData credit"><%= number_to_currency(expenditure_account.allocation - expenditure_account.spent,{:precision => 2,}) %></td>                        
+        <% else %>
+            <td class="expdData debit"><%= number_to_currency(expenditure_account.allocation - expenditure_account.spent,{:precision => 2,}) %></td>                    
+        <% end %>
+	    <td class="action"> <%= link_to image_tag("info.png", :class =>'actionImg') , expenditure_account_path(expenditure_account.id) %></td>
+	    <td class="action"><%= link_to image_tag("delete.png", :class =>'actionImg'), expenditure_account, :confirm => 'Are you sure?', :method => :delete %></td>
+	  </tr>
+	<% end %>								
+</table>
+
+<br />
+
+<%= link_to 'New Expenditure account', new_expenditure_account_path %>

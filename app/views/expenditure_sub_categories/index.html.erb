@@ -1,0 +1,29 @@
+<h1>Listing expenditure_sub_categories</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Allocation</th>
+    <th>Spent</th>
+    <th>Rollover</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @expenditure_sub_categories.each do |expenditure_sub_category| %>
+  <tr>
+    <td><%= expenditure_sub_category.name %></td>
+    <td><%= expenditure_sub_category.allocation %></td>
+    <td><%= expenditure_sub_category.spent %></td>
+    <td><%= expenditure_sub_category.rollover %></td>
+    <td><%= link_to 'Show', expenditure_sub_category %></td>
+    <td><%= link_to 'Edit', edit_expenditure_sub_category_path(expenditure_sub_category) %></td>
+    <td><%= link_to 'Destroy', expenditure_sub_category, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Expenditure sub category', new_expenditure_sub_category_path %>

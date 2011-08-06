@@ -1,0 +1,134 @@
+    
+    <% javascript 'account_manipulation' %>
+    <% javascript 'jquery.dataTables-1.7.6.js' %>
+    <% javascript 'jquery.jeditable-1.7.1.js' %>
+    
+    <p id="notice"><%= notice %></p>
+
+    <div class="contentNavRight">
+        <ul>
+            <li><a href="#">Show History</a></li>
+            <li>&nbsp;|&nbsp;</li>
+            <li><%= link_to   "Add Category", "#", :id => "add_category" %></li>
+            <li>&nbsp;|&nbsp;</li>
+            <li><%= link_to "Add Expenditure Item", "#", :id => "add_expenditure_item" %></li>
+        </ul>
+    </div>
+    
+    <!-- account container heading -->
+    <table class="accHdrTbl">
+        <tr class="accHeader">
+            <td class="expdParentName"><%= @expenditure_account.name %></td>
+            <td class="expdParentEmptyCol"></td>
+            <td class="expdParentEmptyCol"></td>
+            <td class="whatsLeft">What's Left:<span id="accBalance"><%= number_to_currency(@expenditure_account.allocation - @expenditure_account.spent,{:precision => 2}) %></span></td>
+        </tr>
+    </table>
+
+    <!-- category details of the account -->
+    <table id="account_details_table" class="expdTable">
+        <thead>
+            <th class="expdHdrDataName">Expenditure Categories</th>
+            <th class="expdHdrDataCol">Budgeted</th>
+            <th class="expdHdrDataCol">Spent</th>
+            <th class="expdHdrDataCol">Balance</th>
+    		<th class="expdHdrImg">Show</th>
+    		<th class="expdHdrImg">Delete</th>
+        </thead> 
+        <tbody>
+            <% if @expenditure_account.expenditure_categories.empty? %>
+                <tr>
+                    <td class="emptyRow">Currently you do not have any expenditure categories in <%= @expenditure_account.name %> account. </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td> 
+                </tr>
+            <% else %>
+                <% @expenditure_account.expenditure_categories.each do |expenditure_category| %>
+                    <tr id="CAT_<%= expenditure_category.id %>">
+                        <td class="expdName"><%= expenditure_category.name %></td>
+                        <td class="allocation"><%= number_to_currency(expenditure_category.allocation, {:precision => 2,}) %></td>
+                        <td class="spent"><%= number_to_currency(expenditure_category.spent, {:precision => 2,}) %></td>
+                        <% if expenditure_category.allocation - expenditure_category.spent >= 0 %>
+                            <td class="expdData credit"><%= number_to_currency(expenditure_category.allocation - expenditure_category.spent,{:precision => 2,}) %></td>                        
+                        <% else %>
+                            <td class="expdData debit"><%= number_to_currency(expenditure_category.allocation - expenditure_category.spent,{:precision => 2,}) %></td>                    
+                        <% end %> 
+                        
+                        <td class="action"> <%= link_to image_tag("info.png", :class =>'actionImg') , expenditure_category_path(expenditure_category.id) %></td>                        
+                        <td class="action"><%= link_to image_tag("delete.png", :class =>'actionImg') , expenditure_category_path(expenditure_category.id), :confirm => 'Are you sure?', :method => :delete %></td>   
+                    </tr>
+                <% end %>
+            <% end %>       	    
+        </tbody>
+    </table>
+
+    <!-- expenditure items details of the account -->
+    <table id="expenditure_details_table" class="expdTable">
+    	<thead id="header">
+    		<th class="subExpdHdrDataName">Expenditure Item</th>
+    		<th class="subExpdHdrDataCol">Amount</th>
+    		<th class="subExpdHdrDateCol">Date</th>
+     		<th class="expdHdrImg">Delete</th>
+    	</thead>
+
+    	<tbody>
+    	    <% if @expenditure_account.expenditure_items.empty? %>
+                <tr>
+                    <td class="emptyRow">Currently you do not have any expenditure items in <%= @expenditure_account.name %> account. </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            <% else %>
+                 <% @expenditure_account.expenditure_items.each do |expenditure_item| %>
+                        <tr id="ITEM_<%= expenditure_item.id %>">
+                            <td class="expdName"><%= expenditure_item.name %></td>
+                            <td class="spent"><%= number_to_currency(expenditure_item.spent, {:precision => 2,}) %></td>
+                            <td class="expdDate"><%= expenditure_item.created_at.strftime("%d-%m-%Y") %></td>
+                           
+                            <td class="action"><%= link_to image_tag("delete.png", :class =>'actionImg') , expenditure_item_path(expenditure_item.id), :confirm => 'Are you sure?', :method => :delete %></td>
+                        </tr>
+                    <% end %>
+    	    <% end %>
+    	</tbody>
+    </table>
+    
+    <input type="hidden" name="account" value="<%= @expenditure_account.id %>" id="account"> 
+    
+
+    <!-- #####for the popup ######-->
+    <div id="popupContact"><a id="popupContactClose">x</a>
+        <h1>Add Expenditure SubCategory</h1>
+        <div id="contactArea">
+            <div>
+                <label for="newItem">Name
+                <input id="newItem" name="newItem" value="" /></label> 
+            </div>
+            <div>
+                <label for="allocation" >Allocation
+                <input id="allocation" name="allocation" value="" /></label> 
+            </div>            
+            <div>
+                <label for="date">Date
+                <input id="date" name="date" value="" /></label>
+            </div>
+            <div>
+                <label for="spent">Amount spent
+                <input id="spent" name="spent" value="" /></label>
+            </div>
+            <div>
+                <input id="add" name="add" type="button" value="Add" />
+            </div>            
+            <br />
+            <br />
+            Press ESCAPE, Click on X (right-top) or Click Out from the popup to
+            close the popup! <br />
+            <br />
+        </div>
+    </div>                
+    <div id="backgroundPopup"></div>
+    <!--  ##### end  popup ###### -->
+    

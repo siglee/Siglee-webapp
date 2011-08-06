@@ -1,0 +1,411 @@
+var account_details_table;
+var expenditure_details_table;
+
+$(document).ready(function(){
+	//Tell Rails that we’re sending a JavaScript request
+	$.ajaxSetup({
+		'beforeSend': function (xhr){
+	     xhr.setRequestHeader("Accept", "text/javascript")}
+	});
+	
+    //LOADING POPUP - for editing expenditure items
+	$('#add_category').live('click',popUpForAddSubCategory);
+	
+	//LOADING POPUP - for editing expenditure items
+	$('#add_expenditure_item').live('click',popUpForAddExpenditureItem);
+
+	//CLOSING POPUP -Click the x event!
+	$("#popupContactClose").click(function(){
+		disablePopup();
+	});
+	//Click out event!
+	$("#backgroundPopup").click(function(){
+		disablePopup();
+	});
+	//Press Escape event!
+	$(document).keypress(function(e){
+		if(e.keyCode==27 & popupStatus==1){
+			disablePopup();
+		}
+	});
+	
+	//add datatable support
+	account_details_table = addDataTableSupportToCategoryTable();
+	expenditure_details_table = addDataTableSupportToExpdTable();
+	
+	//add event handler to make the table cells editbale (jEditable support)
+	$('#account_details_table .expdName').editable( function(value,settings) {
+		updateExpenditureCategoryName(this,value);
+		return(value);		
+	  }, {		
+        tooltip	  	: 'Click to edit...',
+		height		: '10px',
+		width		: '200px'
+    });
+
+	$('#account_details_table .allocation').editable(function(value,settings) {
+		updateExpenditureCategoryAllocation(this,extractNumericAmountForProcessing(value));
+		return(formatAmountForDisplay(value));		
+	  }, {
+         tooltip	: 'Click to edit...',
+		 height		: '10px',
+		 width		: '65px'
+    });
+
+	$('#expenditure_details_table .expdName').editable( function(value,settings) {
+		updateExpenditureItemName(this,value);
+		return(value);		
+	  }, {		
+        tooltip	  	: 'Click to edit...',
+		height		: '10px',
+		width		: '200px'
+    });	
+
+	$('#expenditure_details_table .spent').editable( function(value,settings) {
+		updateExpenditureItemSpent(this,extractNumericAmountForProcessing(value));
+		return(formatAmountForDisplay(value));		
+	  }, {		
+        tooltip	  	: 'Click to edit...',
+		height		: '10px',
+		width		: '65px'
+    });
+ });
+
+
+function addDataTableSupportToCategoryTable(){
+	//add datatable support
+	return $('#account_details_table').dataTable({
+		"fnDrawCallback": function() {		       
+				$('#account_details_table').width(725);//to make sure that tbale is always redrawn wit hsame width
+		},
+
+        'bAutoWidth': false,
+		'aaSorting': [[ 1, 'asc' ]],
+		'aoColumns': [
+					{ 'sWidth': '50%','bSearchable': false, 'bSortable': false },
+					{ 'sWidth': '10%','bSearchable': false, 'bSortable': false },					
+					{ 'sWidth': '10%','bSearchable': false, 'bSortable': false },
+					{ 'sWidth': '10%','bSearchable': false, 'bSortable': false },
+					{ 'sWidth': '10%','bSearchable': false, 'bSortable': false },
+					{ 'sWidth': '10%','bSearchable': false, 'bSortable': false }
+				],
+		'bJQueryUI': false, //to enable that jQueryUI works for dragging  dropping		
+		'sDom': "", //to get rid of the search element
+		'bPaginate': false,		
+		'bInfo': false// not to show how many rows are shown
+		//"bSort": true		
+	});
+}	
+
+function addDataTableSupportToExpdTable(){
+	//add datatable support
+	return $('#expenditure_details_table').dataTable({
+		"fnDrawCallback": function() {		       
+				$('#expenditure_details_table').width(725);//to make sure that tbale is always redrawn wit hsame width
+		},
+
+        'bAutoWidth': false,
+		'aaSorting': [[ 1, 'asc' ]],
+		'aoColumns': [
+					{ 'sWidth': '61%','bSearchable': false, 'bSortable': false },
+					{ 'sWidth': '13%','bSearchable': false, 'bSortable': false },					
+					{ 'sWidth': '13%','bSearchable': false, 'bSortable': false },
+					{ 'sWidth': '13%','bSearchable': false, 'bSortable': false }
+				],
+		'bJQueryUI': false, //to enable that jQueryUI works for dragging  dropping		
+		'sDom': "", //to get rid of the search element
+		'bPaginate': false,		
+		'bInfo': false// not to show how many rows are shown
+		//"bSort": true		
+	});
+}	
+
+
+function getCategoryCell(category_id){ 
+	var sub_category =  $('#newItem').val();
+	var link = '<a href="/expenditure_sub_categories/'+category_id+'">'+sub_category+'</a>';
+	return '<td class="expdName" id="'+ category_id +'">'+ link +'</td>';
+}
+
+function getAllocationCell(){
+	var allocation = $('#allocation').val();	
+	return '<td class="expdData">'+ formatAmountForDisplay(allocation) +'</td>';
+}
+
+function getSpentCell(){	
+	return '<td class="expdData">$0.00</td>';
+}
+
+function getBalanceCell(){	
+	return '<td class="expdData">$0.00</td>';
+}
+
+function getDeleteButtonCell(category_id){
+	var action_html = '<a rel="nofollow" data-remote="true" data-method="delete" data-confirm="Are you sure?" href="/expenditure_sub_categories/'+category_id+'">Destroy</a>';
+	return '<td class="action">'+ action_html +'</td>';
+}
+
+function formatAmountForDisplay(amount){
+	if(amount.charAt(0) != '$') {
+		amountNumber =  new Number(amount); 
+		return 	'$'+amountNumber.toFixed(2);
+	}
+	return amount;
+}
+
+function extractNumericAmountForProcessing(amount){
+	if(amount.charAt(0) == '$')
+		return amount.substr(1);
+	return amount;	
+}
+
+//to add new subcatgory (with delete button with event handler)
+function createTableRowForCategory(category_id) {	
+	//remove the dataTable support to subcategory details table
+	account_details_table.fnDestroy();
+
+	//append the new  interests as a row to the interest table
+	$('#account_details_table').append('<tr>'
+	 + getCategoryCell(category_id)
+	 + getAllocationCell()
+	 + getSpentCell()
+	 + getBalanceCell()
+	 + getDeleteButtonCell(category_id) + '</tr>');
+	
+	//re-add datatable support
+	account_details_table = addDataTableSupportToCategoryTable();
+}
+
+function getExpenditureItemCell(exp_item_id){ 
+	var exp_item =  $('#newItem').val();
+	var link = '<a href="/expenditure_items/'+exp_item_id+'">'+exp_item+'</a>';
+	return '<td class="expdName" id="'+ exp_item_id +'">'+ link +'</td>';
+}
+
+function getExpItemSpentCell(){
+	var spent = $('#spent').val();	
+	return '<td class="expdData">'+ formatAmountForDisplay(spent) +'</td>';
+}
+
+function getDateCell(){	
+	var date = $('#date').val();
+	return '<td class="expdData">'+ date +'</td>';
+}
+
+function getExpdItemDeleteButtonCell(exp_item_id){
+	var action_html = '<a rel="nofollow" data-remote="true" data-method="delete" data-confirm="Are you sure?" href="/expenditure_items/'+exp_item_id+'">Destroy</a>';
+	return '<td class="action">'+ action_html +'</td>';
+}
+
+//to add new subcatgory (with delete button with event handler)
+function createTableRowForExpenditure(data) {
+	var obj = $.parseJSON(data);
+	exp_item_id = obj.expenditure_item.id;	
+	//remove the dataTable support to subcategory details table
+	expenditure_details_table.fnDestroy();
+
+	//append the new  interests as a row to the interest table
+	$('#expenditure_details_table').append('<tr>'
+	 + getExpenditureItemCell(exp_item_id)
+	 + getDateCell()
+	 + getExpItemSpentCell()	 	 
+	 + getExpdItemDeleteButtonCell(exp_item_id) + '</tr>');
+	
+	//re-add datatable support
+	expenditure_details_table = addDataTableSupportToExpdTable();
+	
+	$('#accBalance').text(formatAmountForDisplay(obj.expenditure_item.expenditure_account.allocation - obj.expenditure_item.expenditure_account.spent));
+}
+/***************************************************************************/
+
+function popUpForAddSubCategory(){
+	
+	$('#add').unbind('click');
+	$('#add').bind('click',addCategory);
+	  
+	$('#date').hide().parent().hide();
+	$('#spent').hide().parent().hide();
+
+	$('#allocation').show().parent().show();
+	
+	//centering with css
+	centerPopup();
+	//load popup
+	loadPopup();
+}
+
+function popUpForAddExpenditureItem(){
+
+	$('#add').unbind('click');
+	$('#add').bind('click',addExpenditureItem);
+	
+	$('#allocation').hide().parent().hide();
+	
+	$('#date').show().parent().show();
+	$('#spent').show().parent().show();  
+
+	//centering with css
+	centerPopup();
+	//load popup
+	loadPopup();
+}
+
+function clearPopupForAddSubCategory() {
+	$('#newItem').val('');
+	$('#allocation').val('');
+}
+
+function clearPopupForAddExpenditureItem() {
+	$('#newItem').val('');
+	$('#date').val('');
+	$('#spent').val('');
+}
+
+/*********************************  AJAX  *********************************/
+function addCategory(){
+	var account_id = $('#account').val();
+	var name = $('#newItem').val();
+	var allocation = $('#allocation').val();
+	
+	$.ajax({
+		type:"post",
+		url:"/expenditure_accounts/add_category",
+		data:{'category[name]':name,'category[allocation]':allocation,'category[expenditure_account_id]':account_id},
+		dataType: "text",
+		success: function(data){
+			//alert(data);			
+			disablePopup();
+			createTableRowForCategory(data);
+			clearPopupForAddSubCategory();
+		}
+		/**TODO: 
+			1.add method  for error on server side
+			2.method for completion 
+			3.spin image for  processing*/
+		
+	});
+}
+
+function addExpenditureItem(){
+	var account_id = $('#account').val();
+	var name = $('#newItem').val();
+	var spent = $('#spent').val();
+	
+	$.ajax({
+		type:"post",
+		url:"/expenditure_accounts/add_expenditure_item.json",
+ data:{'expenditure_item[name]':name,'expenditure_item[spent]':spent,'expenditure_item[expenditure_account_id]':account_id},
+		dataType: "text",
+		success: function(data){				
+			//alert(data);
+			disablePopup();
+			createTableRowForExpenditure(data);
+			clearPopupForAddExpenditureItem();
+		}
+		/**TODO: 
+			1.add method  for error on server side
+			2.method for completion 
+			3.spin image for  processing*/
+		
+	});
+}
+
+function updateExpenditureCategoryName(object, paramter_value){
+	$.ajax({
+		type:"put",
+		url:'/expenditure_categories/'+$(object).parent().attr('id').split('_')[1],
+		data:{'expenditure_category[name]':paramter_value},
+		dataType: "text",
+		success:function(data, textStatus, jqXHR) {
+			console.log("data "+data);
+			console.log("textstatus "+textStatus);
+			console.log("jqXHR "+jqXHR);
+		}
+		/**TODO: 
+			1.add method  for error on server side
+			2.method for completion 
+			3.spin image for  processing*/
+		
+	});
+}
+function updateExpenditureCategoryAllocation(object, paramter_value){
+	$.ajax({
+		type:"put",
+		url:'/expenditure_categories/'+$(object).parent().attr('id').split('_')[1],
+		data:{'expenditure_category[allocation]':paramter_value},
+		dataType: "text",
+		success:function(data, textStatus, jqXHR) {
+			console.log("data "+data);
+			console.log("textstatus "+textStatus);
+			console.log("jqXHR "+jqXHR);
+		}
+		/**TODO: 
+			1.add method  for error on server side
+			2.method for completion 
+			3.spin image for  processing*/
+		
+	});
+}
+
+function updateExpenditureItemName(object, paramter_value){
+	$.ajax({
+		type:"put",
+		url:'/expenditure_items/'+$(object).parent().attr('id').split('_')[1],
+		data:{'expenditure_item[name]':paramter_value},
+		dataType: "text",
+		success:function(data, textStatus, jqXHR) {
+			console.log("data "+data);
+			console.log("textstatus "+textStatus);
+			console.log("jqXHR "+jqXHR);
+		}
+		/**TODO: 
+			1.add method  for error on server side
+			2.method for completion 
+			3.spin image for  processing*/
+		
+	});
+}
+function updateExpenditureItemSpent(object, paramter_value){
+	$.ajax({
+		type:"put",
+		url:'/expenditure_items/'+$(object).parent().attr('id').split('_')[1],
+		data:{'expenditure_item[spent]':paramter_value},
+		dataType: "text",
+		success:function(data, textStatus, jqXHR) {
+			console.log("data "+data);
+			console.log("textstatus "+textStatus);
+			console.log("jqXHR "+jqXHR);
+		}
+		/**TODO: 
+			1.add method  for error on server side
+			2.method for completion 
+			3.spin image for  processing*/
+		
+	});
+}
+
+
+function deleteItem(id){
+	var removedRowId = id;
+	var _id = getDeletedItemId(id);
+	var _parent_id = getDeletedItemParentId(id);
+	$.ajax({
+		type:"post",
+		url:"deleteitem.php",
+		data:{itemId:_id,categoryId:_parent_id},
+		dataType: "text",
+		success: function(data){
+			//alert('data retruned : '+ data);
+			$('#categoryBalance').empty();
+			$('#categoryBalance').append(data);
+			$('#'+removedRowId).empty().remove();
+			$('.subExpdTable tbody tr').removeClass('altrow');
+			$('.subExpdTable tbody tr:odd').addClass('altrow');
+		}
+		/** TODO: 
+			1.add method  for error on server side
+			2.method for completion 
+			3.spin image for  processing
+		*/
+	});
+}

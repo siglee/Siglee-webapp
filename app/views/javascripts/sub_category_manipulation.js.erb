@@ -1,0 +1,181 @@
+var category_details_table;
+var expenditure_details_table;
+
+$(document).ready(function(){
+	//Tell Rails that we’re sending a JavaScript request
+	$.ajaxSetup({
+		'beforeSend': function (xhr){
+	     xhr.setRequestHeader("Accept", "text/javascript")}
+	});
+
+	//LOADING POPUP - for editing expenditure items
+	$('#add_expenditure_item').live('click',popUpForAddExpenditureItem);
+
+	//CLOSING POPUP -Click the x event!
+	$("#popupContactClose").click(function(){
+		disablePopup();
+	});
+	//Click out event!
+	$("#backgroundPopup").click(function(){
+		disablePopup();
+	});
+	//Press Escape event!
+	$(document).keypress(function(e){
+		if(e.keyCode==27 & popupStatus==1){
+			disablePopup();
+		}
+	});
+	
+	//add datatable support
+	expenditure_details_table = addDataTableSupportToExpdTable();
+ });
+
+
+
+
+function addDataTableSupportToExpdTable(){
+	//add datatable support
+	return $('#expenditure_details_table').dataTable({
+		"fnDrawCallback": function() {		       
+				$('#expenditure_details_table').width(725);//to make sure that tbale is always redrawn wit hsame width
+		},
+
+        'bAutoWidth': false,
+		'aaSorting': [[ 1, 'asc' ]],
+		'aoColumns': [
+					{ 'sWidth': '61%','bSearchable': false, 'bSortable': false },
+					{ 'sWidth': '13%','bSearchable': false, 'bSortable': false },					
+					{ 'sWidth': '13%','bSearchable': false, 'bSortable': false },
+					{ 'sWidth': '13%','bSearchable': false, 'bSortable': false }
+				],
+		'bJQueryUI': false, //to enable that jQueryUI works for dragging  dropping		
+		'sDom': "", //to get rid of the search element
+		'bPaginate': false,		
+		'bInfo': false// not to show how many rows are shown
+		//"bSort": true		
+	});
+}	
+
+
+function formatAmountForDisplay(amount){
+	amountNumber =  new Number(amount); 
+	return 	'$'+amountNumber.toFixed(2);
+}
+
+function getExpenditureItemCell(exp_item_id){ 
+	var exp_item =  $('#newItem').val();
+	var link = '<a href="/expenditure_items/'+exp_item_id+'">'+exp_item+'</a>';
+	return '<td class="expdName" id="'+ exp_item_id +'">'+ link +'</td>';
+}
+
+function getExpItemSpentCell(){
+	var spent = $('#spent').val();	
+	return '<td class="expdData">'+ formatAmountForDisplay(spent) +'</td>';
+}
+
+function getDateCell(){	
+	var date = $('#date').val();
+	return '<td class="expdData">'+ date +'</td>';
+}
+
+function getExpdItemDeleteButtonCell(exp_item_id){
+	var action_html = '<a rel="nofollow" data-remote="true" data-method="delete" data-confirm="Are you sure?" href="/expenditure_items/'+exp_item_id+'">Destroy</a>';
+	return '<td class="action
+
+allocation">'+ action_html +'</td>';
+}
+
+//to add new subcatgory (with delete button with event handler)
+function createTableRowForExpenditure(data) {
+	var obj = $.parseJSON(data);
+	exp_item_id = obj.expenditure_item.id;	
+	//remove the dataTable support to subcategory details table
+	expenditure_details_table.fnDestroy();
+
+	//append the new  interests as a row to the interest table
+	$('#expenditure_details_table').append('<tr>'
+	 + getExpenditureItemCell(exp_item_id)
+	 + getDateCell()
+	 + getExpItemSpentCell()
+	 + getExpdItemDeleteButtonCell(exp_item_id) + '</tr>');
+	
+	//re-add datatable support
+	expenditure_details_table = addDataTableSupportToExpdTable();
+	
+	$('#accBalance').text(formatAmountForDisplay(obj.expenditure_item.expenditure_sub_category.allocation - obj.expenditure_item.expenditure_sub_category.spent));
+}
+/***************************************************************************/
+
+function popUpForAddExpenditureItem(){
+
+	$('#add').unbind('click');
+	$('#add').bind('click',addExpenditureItem);
+	
+	$('#allocation').hide().parent().hide();
+	
+	$('#date').show().parent().show();
+	$('#spent').show().parent().show();  
+
+	//centering with css
+	centerPopup();
+	//load popup
+	loadPopup();
+}
+
+
+function clearPopupForAddExpenditureItem() {
+	$('#newItem').val('');
+	$('#date').val('');
+	$('#spent').val('');
+}
+
+/******************************************************************/
+
+function addExpenditureItem(){
+	var sub_category_id = $('#sub_category').val();
+	var name = $('#newItem').val();
+	var spent = $('#spent').val();
+	
+	$.ajax({
+		type:"post",
+		url:"/expenditure_sub_categories/add_expenditure_item.json",
+ data:{'expenditure_item[name]':name,'expenditure_item[spent]':spent,'expenditure_item[expenditure_sub_category_id]':sub_category_id},
+		dataType: "text",
+		success: function(data){				
+			disablePopup();
+			createTableRowForExpenditure(data);
+			clearPopupForAddExpenditureItem();
+		}
+		/**TODO: 
+			1.add method  for error on server side
+			2.method for completion 
+			3.spin image for  processing*/
+		
+	});
+}
+
+
+function deleteItem(id){
+	var removedRowId = id;
+	var _id = getDeletedItemId(id);
+	var _parent_id = getDeletedItemParentId(id);
+	$.ajax({
+		type:"post",
+		url:"deleteitem.php",
+		data:{itemId:_id,categoryId:_parent_id},
+		dataType: "text",
+		success: function(data){
+			//alert('data retruned : '+ data);
+			$('#categoryBalance').empty();
+			$('#categoryBalance').append(data);
+			$('#'+removedRowId).empty().remove();
+			$('.subExpdTable tbody tr').removeClass('altrow');
+			$('.subExpdTable tbody tr:odd').addClass('altrow');
+		}
+		/** TODO: 
+			1.add method  for error on server side
+			2.method for completion 
+			3.spin image for  processing
+		*/
+	});
+}

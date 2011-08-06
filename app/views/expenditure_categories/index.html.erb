@@ -1,0 +1,29 @@
+<h1>Listing expenditure_categories</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Allocation</th>
+    <th>Spent</th>
+    <th>Rollover</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @expenditure_categories.each do |expenditure_category| %>
+  <tr>
+    <td><%= expenditure_category.name %></td>
+    <td><%= expenditure_category.allocation %></td>
+    <td><%= expenditure_category.spent %></td>
+    <td><%= expenditure_category.rollover %></td>
+    <td><%= link_to 'Show', expenditure_category %></td>
+    <td><%= link_to 'Edit', edit_expenditure_category_path(expenditure_category) %></td>
+    <td><%= link_to 'Destroy', expenditure_category, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Expenditure category', new_expenditure_category_path %>

@@ -1,0 +1,33 @@
+<%= form_for(@expenditure_category) do |f| %>
+  <% if @expenditure_category.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@expenditure_category.errors.count, "error") %> prohibited this expenditure_category from being saved:</h2>
+
+      <ul>
+      <% @expenditure_category.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </div>
+  <div class="field">
+    <%= f.label :allocation %><br />
+    <%= f.text_field :allocation %>
+  </div>
+  <div class="field">
+    <%= f.label :spent %><br />
+    <%= f.text_field :spent %>
+  </div>
+  <div class="field">
+    <%= f.label :rollover %><br />
+    <%= f.check_box :rollover %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

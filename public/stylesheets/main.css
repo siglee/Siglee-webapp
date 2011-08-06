@@ -1,0 +1,441 @@
+@CHARSET "ISO-8859-1";
+
+body,p,td,th,div,ol,ul,li {
+	font-family: arial, helvetica, sans-serif;
+	font-size: 12px;
+}
+
+h1,h2,h3,h4 {
+	font-family: arial, helvetica, sans-serif;
+	color: #fff;
+}
+
+a:link, a:visited {
+	color:#6699CC;
+}
+
+.page {
+	width: 1000px;
+	min-width: 1000px;
+	height: 100%;
+	margin: 10px auto 10px;
+}
+
+.heading {
+	padding: 6px 0px 5px 15px;
+}
+
+.headerDiv {
+	background-color: #6699CC;
+	margin: 1px auto 5px;
+	height: 80px;
+}
+
+.logoutBtn {
+	float: right;
+	margin:0;
+	padding-right: 12px;
+	
+}
+
+.logoutBtn a:link {
+	color: #fff;
+}
+
+.logoutBtn a:hover {
+	color: #fff;
+}
+
+.logoutBtn a:visited {
+	color: #fff;
+}
+
+.logoutBtn a:active {
+	color: #fff;
+}
+/**************FOOTER****************/
+.footerDiv {
+	background-color: #6699CC;
+	margin: 5px auto;
+	height: 20px;
+	clear: both;
+	color: #fff;
+}
+
+#footerNavRight {
+	display: inline;
+	float: right;
+	padding: 3px;
+}
+
+#footerNavLeft {
+	display: inline;
+	float: left;
+	padding: 3px;
+}
+
+#footerNavLeft ul,#footerNavRight ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+#footerNavLeft li,#footerNavRight li {
+	display: inline;
+}
+
+#footerNavRight a:link {
+	color: #fff;
+}
+
+#footerNavRight a:hover {
+	color: #fff;
+}
+
+#footerNavRight a:visited {
+	color: #fff;
+}
+
+#footerNavRight a:active {
+	color: #fff;
+}
+
+/******************************/
+.contentDiv {
+	background-color: #fff;
+	margin: 0px auto;
+	min-height: 600px;
+	width: 100%;
+	overflow: hidden;
+	z-index: 1;
+}
+
+.contentLeftNavDiv {
+	background-color: #6699CC;
+	height: 100%;
+	width: 14.5%;
+	float: left;
+	margin-right: 5px;
+	padding-bottom: 32767px;
+	margin-bottom: -32767px;
+}
+
+.contentBodyDiv {
+	background-color: #eee;
+	height: 100%;
+	width: 85%;
+	float: right;
+	padding-bottom: 32767px;
+	margin-bottom: -32767px;
+}
+
+.content {
+	width: 85%;
+	display: block;
+	margin: 5px auto;
+}
+
+/**************LEFT NAV*******************/
+#contentNavLeft {
+	font-size: 14px !important;
+}
+
+#contentNavLeft ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+#contentNavLeft li {
+	display: block;
+	border-bottom: 1px solid #fff;
+}
+
+#contentNavLeft a:link,#contentNavLeft a:visited {
+	color: #fff;
+	display: block;
+	padding: 0.4em 0 0.4em 0.5em;
+	text-decoration: none;
+}
+
+#contentNavLeft a:hover {
+	background-color: #ffae00;
+	color: #fff;
+}
+
+#contentNavLeft a:active {
+	color: #fff;
+	background-color: #6699CC;
+}
+
+/******************CONTENT*****************/
+.breadcrumb {
+	display: block;
+	width: 100%;
+	height: 20px;
+	padding: 12px 0px 0px 63px;
+}
+
+.breadcrumb ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	float: left;
+}
+
+.breadcrumb li {
+	display: inline;
+}
+
+.breadcrumb a:link,.breadcrumb a:hover,.breadcrumb a:visited {
+	color: #6699CC;
+}
+
+.breadcrumb a:active {
+	color: #ffae00;
+}
+
+/**************CONTETN NAV RIGHT**********/
+.contentNavRight {
+	display: block;
+	width: 100%;
+	height: 15px;
+}
+
+.contentNavRight ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	float: right;
+}
+
+.contentNavRight li {
+	display: inline;
+}
+
+.contentNavRight a:link,.contentNavRight a:hover,.contentNavRight a:visited
+	{
+	color: #6699CC;
+}
+
+.contentNavRight a:active {
+	color: #ffae00;
+}
+/************ Expenditure Parent and Balance row ***************/
+.accHdrTbl  {
+	width: 100%;
+	height: 30px;
+	margin: 10px auto 5px;
+	/*border: 1px solid #fff;*/
+	border-collapse: collapse;
+}
+
+.accHdrTbl td{
+	color: #fff;
+	font-weight: bold;
+	font-size: 14px;
+}
+
+.main_acc_list_Hdr{
+	background-color: #fb0;
+	height:30px;
+	color: #fff;
+}
+.account_hdr_title {
+	padding-left:5px;
+	padding-top:5px;
+}
+.accHeader {
+	background-color: #fb0;
+}
+
+.expdParentName {
+	width: 200px;
+	text-align: left;
+	padding: 2px
+}
+
+.expdParentEmptyCol {
+	width: 100px;
+	text-align: right;
+	padding: 2px;
+}
+
+.whatsLeft {
+	width: 120px;
+	text-align: right;
+	padding: 2px;
+}
+
+/************ Expenditure Details (cat/subcat/item) table header row ***************/
+.expdTable {
+	width: 100%;
+	margin: 10px auto 5px;
+	border-collapse: collapse;
+	border: 1px solid #D6DDE6;
+}
+
+.expdTable th {
+	color: #fff;
+	font-size:13px;
+	background-color: #6699CC;
+}
+
+.expdHdrDataName, .subExpdHdrDataName {	
+	text-align: left;
+	padding: 2px
+}
+
+.expdHdrDataCol, .subExpdHdrDataCol {
+	text-align: right;
+	padding: 2px;
+}
+
+.expdHdrDateCol, .subExpdHdrDateCol {
+	text-align: center;
+	padding: 2px;
+}
+
+.expdHdrImg {
+	width: 100px;
+	text-align: center;
+	padding: 2px;
+}
+
+
+
+/************ Main Expenditure Details (account,category, sub category and items) ***************/
+.emptyAccount {
+	text-align:center;
+	margin:0px;
+}
+
+.emptyRow {
+	text-align:center;
+	padding:5px 0px 5px;
+	margin:0px;
+}
+.expdName {	
+	text-align: left;
+	padding: 2px;
+	font-weight: normal;
+	color: #000;
+}
+
+.expdNameTbx{
+	text-align: right;
+	font-weight: normal;
+	color: #000;
+	width: 120px;
+}
+
+.expdData, .allocation, .spent {	
+	text-align: right;
+	padding: 2px;
+	font-weight: normal;
+	color: #000;
+}
+
+.expdDate {	
+	text-align: center;
+	padding: 2px;
+	font-weight: normal;
+	color: #000;
+}
+
+.expdName a:link,.expdName a:visited {
+	color: #000;
+}
+
+.expdName a:active {
+	color: #6699CC;
+}
+
+.action {	
+	text-align: center;
+	padding: 2px;
+}
+
+.actionImg {	
+	text-align: center;
+	padding: 2px;
+	width: 16px;
+	height:16px;
+	border:0;
+}
+
+
+.debit {
+	color: #F00;
+}
+
+.credit {
+	color: #090;
+}
+
+.separator {
+	background-color: #eee;
+	height: 2px;
+}
+
+.odd {
+	background-color: #ddd;
+}
+
+/****************** POPUP *******************/
+#backgroundPopup {
+	display: none;
+	position: fixed;
+	_position: absolute; /* hack for internet explorer 6*/
+	height: 100%;
+	width: 100%;
+	top: 0;
+	left: 0;
+	background: #000000;
+	border: 1px solid #cecece;
+	z-index: 1;
+}
+
+#popupContact {
+	display: none;
+	position: fixed;
+	_position: absolute; /* hack for internet explorer 6*/
+	height: 250px;
+	width: 300px;
+	background: #FFFFFF;
+	border: 2px solid #cecece;
+	z-index: 2;
+	padding: 12px;
+	font-size: 13px;
+}
+
+#popupContact h1 {
+	text-align: left;
+	color: #6FA5FD;
+	font-size: 22px;
+	font-weight: 700;
+	border-bottom: 1px dotted #D3D3D3;
+	padding-bottom: 2px;
+	margin-bottom: 20px;
+}
+
+#popupContactClose {
+	font-size: 14px;
+	line-height: 14px;
+	right: 6px;
+	top: 4px;
+	position: absolute;
+	color: #6fa5fd;
+	font-weight: 700;
+	display: block;
+}
+.display-date{
+	display: block;
+}
+.hide-date{
+	display: none;
+}	
+#editCategory {
+	text-align: center;
+	/*margin: 100px;*/
+}

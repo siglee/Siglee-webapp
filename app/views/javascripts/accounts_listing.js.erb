@@ -1,0 +1,125 @@
+var accounts_list_table;
+
+$(document).ready(function(){
+	//Tell Rails that we’re sending a JavaScript request
+	$.ajaxSetup({
+		'beforeSend': function (xhr){
+	     xhr.setRequestHeader("Accept", "text/javascript")}
+	});  
+	
+	//add datatable support
+	accounts_list_table = addDataTableSupportToAccountListingTable();
+
+	$('.expdName').editable( function(value,settings) {
+		console.log(settings);
+		updateExpenditureAccountName(this,value);
+		return(value);		
+	}, {		
+		indicator 	: 'Saving...',
+        tooltip	  	: 'Click to edit...',
+		height		: '10px',
+		width		: '200px'
+    });
+
+	$('.allocation').editable(function(value,settings) {
+		console.log(settings);
+		updateExpenditureAccountAllocation(this,value);
+		return(value);		
+	}, {
+         indicator	: 'Saving...',
+         tooltip	: 'Click to edit...',
+		 height		: '10px',
+		 width		: '65px'
+    });
+
+
+
+ });
+
+
+function addDataTableSupportToAccountListingTable(){
+	//add datatable support
+	return $('#accounts_list_table').dataTable({
+		"fnDrawCallback": function() {		       
+				$('#account_details_table').width(725);//to make sure that tbale is always redrawn wit hsame width
+		},
+
+        'bAutoWidth': false,
+		'aaSorting': [[ 1, 'desc' ]],
+		'aoColumns': [
+					{ 'sWidth': '50%','bSearchable': false, 'bSortable': false },
+					{ 'sWidth': '10%','bSearchable': false, 'bSortable': false },					
+					{ 'sWidth': '10%','bSearchable': false, 'bSortable': false },
+					{ 'sWidth': '10%','bSearchable': false, 'bSortable': false },
+					{ 'sWidth': '10%','bSearchable': false, 'bSortable': false },
+					{ 'sWidth': '10%','bSearchable': false, 'bSortable': false }
+				],
+		'bJQueryUI': false, //to enable that jQueryUI works for dragging  dropping		
+		'sDom': "", //to get rid of the search element
+		'bPaginate': false,		
+		'bInfo': false// not to show how many rows are shown
+		//"bSort": true		
+	});
+}	
+
+function updateExpenditureAccountName(object, paramter_value){
+	$.ajax({
+		type:"put",
+		url:'/expenditure_accounts/'+$(object).parent().attr('id').split('_')[1],
+		data:{'expenditure_account[name]':paramter_value},
+		dataType: "text",
+		success:function(data, textStatus, jqXHR) {
+			console.log("data "+data);
+			console.log("textstatus "+textStatus);
+			console.log("jqXHR "+jqXHR);
+		}
+		/**TODO: 
+			1.add method  for error on server side
+			2.method for completion 
+			3.spin image for  processing*/
+		
+	});
+}
+function updateExpenditureAccountAllocation(object, paramter_value){
+	$.ajax({
+		type:"put",
+		url:'/expenditure_accounts/'+object.parentNode.getAttribute('id').split('_')[1],
+		data:{'expenditure_account[allocation]':paramter_value},
+		dataType: "text",
+		success:function(data, textStatus, jqXHR) {
+			console.log("data "+data);
+			console.log("textstatus "+textStatus);
+			console.log("jqXHR "+jqXHR);
+		}
+		/**TODO: 
+			1.add method  for error on server side
+			2.method for completion 
+			3.spin image for  processing*/
+		
+	});
+}
+
+function deleteItem(id){
+	var removedRowId = id;
+	var _id = getDeletedItemId(id);
+	var _parent_id = getDeletedItemParentId(id);
+	$.ajax({
+		type:"post",
+		url:"deleteitem.php",
+		data:{itemId:_id,categoryId:_parent_id},
+		dataType: "text",
+		success: function(data){
+			//alert('data retruned : '+ data);
+			$('#categoryBalance').empty();
+			$('#categoryBalance').append(data);
+			$('#'+removedRowId).empty().remove();
+			$('.subExpdTable tbody tr').removeClass('altrow');
+			$('.subExpdTable tbody tr:odd').addClass('altrow');
+		}
+		/** TODO: 
+			1.add method  for error on server side
+			2.method for completion 
+			3.spin image for  processing
+		*/
+	});
+}

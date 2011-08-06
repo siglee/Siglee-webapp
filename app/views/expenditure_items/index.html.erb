@@ -1,0 +1,27 @@
+<h1>Listing expenditure_items</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+    <th>Spent</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @expenditure_items.each do |expenditure_item| %>
+  <tr>
+    <td><%= expenditure_item.name %></td>
+    <td><%= expenditure_item.description %></td>
+    <td><%= expenditure_item.spent %></td>
+    <td><%= link_to 'Show', expenditure_item %></td>
+    <td><%= link_to 'Edit', edit_expenditure_item_path(expenditure_item) %></td>
+    <td><%= link_to 'Destroy', expenditure_item, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Expenditure item', new_expenditure_item_path %>

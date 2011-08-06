@@ -1,0 +1,9 @@
+
+	<div id="contentNavLeft">
+		<ul>
+			<li><%= link_to "Home", "/expenditure_accounts" %></li>
+			<%  @accounts.each do |expenditure_account| %>
+			    <li><%= link_to expenditure_account.name, expenditure_account %></li>
+			<% end %>
+		</ul>
+	</div>
