@@ -26,11 +26,11 @@ test:
   username: root
   password: vmd2310s
 
-uat:
+staging:
   adapter: mysql2
   encoding: utf8
   reconnect: false
-  database: jedo_test
+  database: jedo_staging
   pool: 5
   username: root
   password: vmd2310s
