@@ -4,6 +4,7 @@ gem 'rails', '3.0.3'
 gem 'rake', '0.9.2'
 gem "jquery-rails"
 gem 'mysql2' , '0.2.7'
+
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
@@ -31,3 +32,7 @@ gem 'mysql2' , '0.2.7'
 # group :development, :test do
 #   gem 'webrat'
 # end
+
+group :production do    
+  gem 'pg'
+end
